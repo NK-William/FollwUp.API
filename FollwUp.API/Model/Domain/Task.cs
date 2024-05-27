@@ -13,6 +13,6 @@ namespace FollwUp.API.Model.Domain
         public TaskStatus Status { get; set; }
         public string? Description { get; set; }
         public DateTime Eta { get; set; }
-        public Color Color { get; set; }
+        public required string Color { get; set; }
     }
 }
