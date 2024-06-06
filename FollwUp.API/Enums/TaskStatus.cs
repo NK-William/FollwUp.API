@@ -2,9 +2,9 @@
 {
     public enum TaskStatus
     {
-        Pending,
-        Accepted,
-        Completed,
-        Rejected
+        Pending = 0,
+        Accepted = 1,
+        Completed = 2,
+        Rejected = 3
     }
 }

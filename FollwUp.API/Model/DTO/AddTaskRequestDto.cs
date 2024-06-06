@@ -1,10 +1,9 @@
 ﻿using TaskStatus = FollwUp.API.Enums.TaskStatus;
 
-namespace FollwUp.API.Model.Domain
+namespace FollwUp.API.Model.DTO
 {
-    public class Task
+    public class AddTaskRequestDto
     {
-        public Guid Id { get; set; }
         public required string Name { get; set; }
         public int ProgressToHundred { get; set; }
         public required string Organization { get; set; }
@@ -12,5 +11,9 @@ namespace FollwUp.API.Model.Domain
         public string? Description { get; set; }
         public DateTime Eta { get; set; }
         public required string Color { get; set; }
+
+        public required List<AddPhaseRequestDto> Phases { get; set; }
+        //public required AddInvitationRequestDto Invitation { get; set; }
+        //public required AddRoleRequestDto Role { get; set; }
     }
 }
