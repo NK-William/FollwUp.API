@@ -8,12 +8,12 @@ namespace FollwUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PhasesController: ControllerBase
+    public class PhaseController : ControllerBase
     {
         private readonly IMapper mapper;
         private readonly IPhaseRepository phaseRepository;
 
-        public PhasesController(IMapper mapper, IPhaseRepository phaseRepository)
+        public PhaseController(IMapper mapper, IPhaseRepository phaseRepository)
         {
             this.mapper = mapper;
             this.phaseRepository = phaseRepository;

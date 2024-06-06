@@ -13,13 +13,13 @@ namespace FollwUp.API.Controllers
     {
         private readonly IMapper mapper;
         private readonly ITaskRepository taskRepository;
-        private readonly PhasesController phasesController;
+        private readonly PhaseController phaseController;
 
-        public TasksController(IMapper mapper, ITaskRepository taskRepository, PhasesController phasesController)
+        public TasksController(IMapper mapper, ITaskRepository taskRepository, PhaseController phaseController)
         {
             this.mapper = mapper;
             this.taskRepository = taskRepository;
-            this.phasesController = phasesController;
+            this.phaseController = phaseController;
         }
 
         [HttpPost]
@@ -43,10 +43,10 @@ namespace FollwUp.API.Controllers
                 Icon = p.Icon,
                 Number = p.Number,
                 Status = p.Status,
-                //TaskId = taskDto.Id
+                TaskId = taskDto.Id
             }).ToList();
 
-            var phaseDto = await phasesController.Create(addPhaseRequestDto);
+            var phaseDto = await phaseController.Create(addPhaseRequestDto);
 
             return Ok(taskDto);
         }
