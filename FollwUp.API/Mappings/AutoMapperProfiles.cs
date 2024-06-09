@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FollwUp.API.Model.DTO;
+using Domain = FollwUp.API.Model.Domain;
 
 namespace FollwUp.API.Mappings
 {
@@ -8,12 +9,20 @@ namespace FollwUp.API.Mappings
         public AutoMapperProfiles()
         {
             // Task
-            CreateMap<AddTaskRequestDto, Model.Domain.Task>().ReverseMap();
-            CreateMap<Model.Domain.Task, TaskDto>().ReverseMap();
+            CreateMap<AddTaskRequestDto, Domain.Task>().ReverseMap();
+            CreateMap<Domain.Task, TaskDto>().ReverseMap();
 
             // Phase
-            CreateMap<AddPhaseRequestDto, Model.Domain.Phase>().ReverseMap();
-            CreateMap<Model.Domain.Phase, PhaseDto>().ReverseMap();
+            CreateMap<AddPhaseRequestDto, Domain.Phase>().ReverseMap();
+            CreateMap<Domain.Phase, PhaseDto>().ReverseMap();
+
+            // Role
+            CreateMap<AddRoleRequestDto, Domain.Role>().ReverseMap();
+            CreateMap<Domain.Role, RoleDto>().ReverseMap();
+
+            // Invitation
+            CreateMap<AddInvitationRequestDto, Domain.Invitation>().ReverseMap();
+            CreateMap<Domain.Invitation, InvitationDto>().ReverseMap();
         }
     }
 }
