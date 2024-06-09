@@ -23,6 +23,10 @@ namespace FollwUp.API.Mappings
             // Invitation
             CreateMap<AddInvitationRequestDto, Domain.Invitation>().ReverseMap();
             CreateMap<Domain.Invitation, InvitationDto>().ReverseMap();
+
+            // Profile
+            CreateMap<AddProfileRequestDto, Domain.Profile>().ReverseMap();
+            CreateMap<Domain.Profile, ProfileDto>().ReverseMap();
         }
     }
 }

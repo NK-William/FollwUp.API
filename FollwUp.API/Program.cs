@@ -41,6 +41,9 @@ builder.Services.AddScoped<IInvitationRepository, SqlInvitationRepository>();
 // Injecting IRoleRepository dependency with the implementation SqlRoleRepository
 builder.Services.AddScoped<IRoleRepository, SqlRoleRepository>();
 
+// Injecting IProfileRepository dependency with the implementation SqlProfileRepository
+builder.Services.AddScoped<IProfileRepository, SqlProfileRepository>();
+
 // Injecting AutoMapper dependency
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 

@@ -61,7 +61,7 @@ namespace FollwUp.API.Controllers
             {
                 RoleType = RoleType.Editor,
                 TaskId = taskDto.Id,
-                //ProfileId = Guid.NewGuid() // TODO: Use profile id when profile is ready
+                ProfileId = addTaskRequestDto.ProfileId // TODO: Use profile id when profile is ready
             };
             var roleDto = await rolesController.Create(addRoleRequestDto);
             if (roleDto is OkObjectResult okRoleResult && okRoleResult.Value != null)
