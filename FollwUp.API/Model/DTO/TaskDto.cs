@@ -14,7 +14,7 @@ namespace FollwUp.API.Model.DTO
         public DateTime Eta { get; set; }
         public required string Color { get; set; }
         public required List<PhaseDto> Phases { get; set; }
-        public required RoleDto Role { get; set; }
+        public required List<RoleDto> Roles { get; set; }
         public required InvitationDto Invitation { get; set; }
     }
 }

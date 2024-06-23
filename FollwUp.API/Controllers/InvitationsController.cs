@@ -31,5 +31,16 @@ namespace FollwUp.API.Controllers
 
             return Ok(invitationDto);
         }
+
+        [HttpGet]
+        [Route("byTaskId/{id:Guid}")]
+        public async Task<IActionResult> GetByTaskId([FromRoute] Guid id)
+        {
+            var invitationDomainModel = await invitationRepository.GetByTaskIdAsync(id);
+
+            var invitationDto = mapper.Map<InvitationDto>(invitationDomainModel);
+
+            return Ok(invitationDto);
+        }
     }
 }

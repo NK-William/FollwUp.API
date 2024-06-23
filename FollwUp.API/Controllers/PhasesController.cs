@@ -30,5 +30,16 @@ namespace FollwUp.API.Controllers
 
             return Ok(phasesDto);
         }
+
+        [HttpGet]
+        [Route("byTaskId/{id:Guid}")]
+        public async Task<IActionResult> GetAllByTaskId([FromRoute] Guid id)
+        { 
+            var phasesDomainModel = await phaseRepository.GetAllByTaskIdAsync(id);
+
+            var phasesDto = mapper.Map<List<PhaseDto>>(phasesDomainModel);
+
+            return Ok(phasesDto);
+        }
     }
 }

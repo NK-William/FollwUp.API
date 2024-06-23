@@ -1,6 +1,7 @@
 ﻿using FollwUp.API.Data;
 using FollwUp.API.Model.Domain;
 using FollwUp.API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace FollwUp.API.Repositories
@@ -19,6 +20,11 @@ namespace FollwUp.API.Repositories
             await dbContext.Invitations.AddAsync(invitation);
             await dbContext.SaveChangesAsync();
             return invitation;
+        }
+
+        public async Task<Invitation?> GetByTaskIdAsync(Guid id)
+        {
+            return await dbContext.Invitations.FirstOrDefaultAsync(i => i.TaskId == id);
         }
     }
 }

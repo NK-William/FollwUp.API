@@ -31,5 +31,27 @@ namespace FollwUp.API.Controllers
 
             return Ok(roleDto);
         }
+
+        [HttpGet]
+        [Route("byProfileId/{id:Guid}")]
+        public async Task<IActionResult> GetAllByProfileId([FromRoute] Guid id)
+        {
+            var rolesDomainModel = await roleRepository.GetAllByProfileIdAsync(id);
+
+            var rolesDto = mapper.Map<List<RoleDto>>(rolesDomainModel);
+
+            return Ok(rolesDto);
+        }
+
+        [HttpGet]
+        [Route("byTaskId/{id:Guid}")]
+        public async Task<IActionResult> GetAllByTaskId([FromRoute] Guid id)
+        {
+            var rolesDomainModel = await roleRepository.GetAllByTaskIdAsync(id);
+
+            var rolesDto = mapper.Map<List<RoleDto>>(rolesDomainModel);
+
+            return Ok(rolesDto);
+        }
     }
 }

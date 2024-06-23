@@ -5,5 +5,7 @@ namespace FollwUp.API.Repositories.Interfaces
     public interface IPhaseRepository
     {
         Task<List<Phase>> CreateAsync(List<Phase> phases);
+
+        Task<List<Phase>> GetAllByTaskIdAsync(Guid id);
     }
 }

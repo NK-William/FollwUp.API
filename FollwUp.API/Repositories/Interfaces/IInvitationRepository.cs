@@ -5,5 +5,6 @@ namespace FollwUp.API.Repositories.Interfaces
     public interface IInvitationRepository
     {
         Task<Invitation> CreateAsync(Invitation invitation);
+        Task<Invitation?> GetByTaskIdAsync(Guid id);
     }
 }

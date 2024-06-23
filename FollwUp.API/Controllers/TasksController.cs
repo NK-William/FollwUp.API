@@ -37,9 +37,10 @@ namespace FollwUp.API.Controllers
 
             var taskDto = mapper.Map<TaskDto>(taskDomainModel);
 
-            if (taskDto == null || taskDto.Id == null)
+            if (taskDto == null || taskDto.Id == Guid.Empty)
             {
                 // Something went wrong
+                return BadRequest();
             }
 
             // Phase
@@ -65,7 +66,7 @@ namespace FollwUp.API.Controllers
             };
             var roleDto = await rolesController.Create(addRoleRequestDto);
             if (roleDto is OkObjectResult okRoleResult && okRoleResult.Value != null)
-                taskDto.Role = (RoleDto)okRoleResult.Value;
+                taskDto.Roles = new List<RoleDto> { (RoleDto)okRoleResult.Value };
 
             // Invitation
             addTaskRequestDto.Invitation.TaskId = taskDto.Id;
@@ -74,6 +75,89 @@ namespace FollwUp.API.Controllers
                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
 
             return Ok(taskDto);
+        }
+
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+            var taskDomainModel = await taskRepository.GetByIdAsync(id);
+
+            if (taskDomainModel != null)
+            {
+                var taskDto = mapper.Map<TaskDto>(taskDomainModel);
+
+                // Get Phases by task id
+                var phaseDto = await PhasesController.GetAllByTaskId(id);
+                if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
+                    taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
+
+                // Get Role by task id
+                var roleDto = await rolesController.GetAllByTaskId(id);
+                if (roleDto is OkObjectResult okRoleResult && okRoleResult.Value != null)
+                    taskDto.Roles = new List<RoleDto>((List<RoleDto>)okRoleResult.Value);
+
+                // Get Invitation by task id
+                var invitationDto = await invitationsController.GetByTaskId(id);
+                if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
+                    taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
+
+
+                return Ok(taskDto);
+            }
+            else
+            {
+                // Something went wrong
+                return BadRequest();
+            }
+        }
+
+
+        [HttpGet]
+        [Route("byProfileId/{id:Guid}")]
+        public async Task<IActionResult> GetAllByProfileId([FromRoute] Guid id)
+        {
+            var rolesDto = await rolesController.GetAllByProfileId(id);
+
+            if (rolesDto is OkObjectResult okRolesResult && okRolesResult.Value != null)
+            {
+                List<RoleDto> roles = (List<RoleDto>)okRolesResult.Value;
+                if (roles.Count > 0)
+                {
+                    var tasks = new List<TaskDto>();
+                    foreach (var role in roles)
+                    {
+                        var taskId = role.TaskId;
+                        var taskDomainModel = await taskRepository.GetByIdAsync(taskId);
+
+                        if (taskDomainModel != null)
+                        {
+                            var taskDto = mapper.Map<TaskDto>(taskDomainModel);
+
+                            // Get Phases by task id
+                            var phaseDto = await PhasesController.GetAllByTaskId(taskId);
+                            if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
+                                taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
+
+                            // Get Invitation by task id
+                            var invitationDto = await invitationsController.GetByTaskId(taskId);
+                            if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
+                                taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
+
+                            taskDto.Roles = roles.Where(r => r.TaskId == taskDto.Id).ToList();
+
+                            tasks.Add(taskDto);
+                        }
+                    }
+                    return Ok(tasks);
+                }
+                return Ok(new List<TaskDto>());
+            }
+            else
+            {
+                // Something went wrong
+                return BadRequest();
+            }
         }
     }
 }
