@@ -70,6 +70,7 @@ namespace FollwUp.API.Controllers
 
             // Invitation
             addTaskRequestDto.Invitation.TaskId = taskDto.Id;
+            addTaskRequestDto.Invitation.RoleType = RoleType.Tracker;
             var invitationDto = await invitationsController.Create(addTaskRequestDto.Invitation);
             if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;

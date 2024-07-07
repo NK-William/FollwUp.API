@@ -2,8 +2,8 @@
 {
     public enum RoleType
     {
-        Editor = 0,
-        Tracker = 1,
-        Viewer = 2,
+        Tracker = 0,
+        Viewer = 1,
+        Editor = 2,
     }
 }
