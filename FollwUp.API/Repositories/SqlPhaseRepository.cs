@@ -24,5 +24,24 @@ namespace FollwUp.API.Repositories
         {
             return await dbContext.Phases.Where(p => p.TaskId == id).ToListAsync();
         }
+
+        public async Task<Phase?> UpdateAsync(Guid id, Phase phase)
+        {
+            var existingPhase = await dbContext.Phases.FirstOrDefaultAsync(p => p.id == id);
+
+            if (existingPhase == null)
+                return null;
+
+            existingPhase.Name = phase.Name;
+            existingPhase.Number = phase.Number;
+            existingPhase.Description = phase.Description;
+            existingPhase.Icon = phase.Icon;
+            existingPhase.Status = phase.Status;
+            existingPhase.TaskId = phase.TaskId;
+
+            await dbContext.SaveChangesAsync();
+
+            return existingPhase;
+        }
     }
 }

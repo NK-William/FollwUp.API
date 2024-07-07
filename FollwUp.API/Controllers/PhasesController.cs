@@ -41,5 +41,20 @@ namespace FollwUp.API.Controllers
 
             return Ok(phasesDto);
         }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdatePhaseRequestDto updatePhaseRequestDto)
+        {
+            var phaseDomainModel = mapper.Map<Phase>(updatePhaseRequestDto);
+
+            await phaseRepository.UpdateAsync(id, phaseDomainModel);
+
+            var phaseDto = mapper.Map<PhaseDto>(phaseDomainModel);
+
+            return Ok(phaseDto);
+        }
+
+        // ToDo: Next implement the Delete method
     }
 }

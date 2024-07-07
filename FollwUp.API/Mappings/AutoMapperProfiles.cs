@@ -15,6 +15,7 @@ namespace FollwUp.API.Mappings
             // Phase
             CreateMap<AddPhaseRequestDto, Domain.Phase>().ReverseMap();
             CreateMap<Domain.Phase, PhaseDto>().ReverseMap();
+            CreateMap<UpdatePhaseRequestDto, Domain.Phase>().ReverseMap();
 
             // Role
             CreateMap<AddRoleRequestDto, Domain.Role>().ReverseMap();

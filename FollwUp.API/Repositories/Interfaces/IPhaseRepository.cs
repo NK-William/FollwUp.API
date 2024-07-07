@@ -7,5 +7,7 @@ namespace FollwUp.API.Repositories.Interfaces
         Task<List<Phase>> CreateAsync(List<Phase> phases);
 
         Task<List<Phase>> GetAllByTaskIdAsync(Guid id);
+
+        Task<Phase?> UpdateAsync(Guid id, Phase phase);
     }
 }
