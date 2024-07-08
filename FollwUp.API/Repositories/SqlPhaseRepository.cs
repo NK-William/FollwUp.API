@@ -43,5 +43,18 @@ namespace FollwUp.API.Repositories
 
             return existingPhase;
         }
+
+
+        public async Task<Phase?> DeleteAsync(Guid id)
+        {
+            var existingPhase = await dbContext.Phases.FirstOrDefaultAsync(p => p.id == id);
+
+            if(existingPhase == null)
+                return null;
+
+            dbContext.Phases.Remove(existingPhase);
+            await dbContext.SaveChangesAsync();
+            return existingPhase;
+        }
     }
 }

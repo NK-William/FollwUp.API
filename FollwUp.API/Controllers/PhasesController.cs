@@ -34,7 +34,7 @@ namespace FollwUp.API.Controllers
         [HttpGet]
         [Route("byTaskId/{id:Guid}")]
         public async Task<IActionResult> GetAllByTaskId([FromRoute] Guid id)
-        { 
+        {
             var phasesDomainModel = await phaseRepository.GetAllByTaskIdAsync(id);
 
             var phasesDto = mapper.Map<List<PhaseDto>>(phasesDomainModel);
@@ -56,5 +56,37 @@ namespace FollwUp.API.Controllers
         }
 
         // ToDo: Next implement the Delete method
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var deletedPhaseDomainModel = await phaseRepository.DeleteAsync(id);
+
+            if (deletedPhaseDomainModel == null)
+                return NotFound();
+
+            // get all by task id
+            var phasesDomainModel = await phaseRepository.GetAllByTaskIdAsync(deletedPhaseDomainModel.TaskId);
+
+            // order by number
+            phasesDomainModel = phasesDomainModel.OrderBy(p => p.Number).ToList();
+
+            // update number
+            for (int i = 0; i < phasesDomainModel.Count; i++)
+            {
+                phasesDomainModel[i].Number = i + 1;
+            }
+
+            // update all phases
+            foreach (var phase in phasesDomainModel)
+            {
+                await phaseRepository.UpdateAsync(phase.id, phase);
+            }
+
+            var deletedPhaseDto = mapper.Map<PhaseDto>(deletedPhaseDomainModel);
+
+            return Ok(deletedPhaseDto);
+        }
+
     }
 }

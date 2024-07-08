@@ -9,5 +9,7 @@ namespace FollwUp.API.Repositories.Interfaces
         Task<List<Phase>> GetAllByTaskIdAsync(Guid id);
 
         Task<Phase?> UpdateAsync(Guid id, Phase phase);
+
+        Task<Phase?> DeleteAsync(Guid id);
     }
 }
