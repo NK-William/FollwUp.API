@@ -13,7 +13,14 @@ namespace FollwUp.API.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<List<Phase>> CreateAsync(List<Phase> phases)
+        public async Task<Phase> CreateAsync(Phase phase)
+        {
+            await dbContext.Phases.AddAsync(phase);
+            await dbContext.SaveChangesAsync();
+            return phase;
+        }
+
+        public async Task<List<Phase>> CreatePhasesAsync(List<Phase> phases)
         {
             await dbContext.Phases.AddRangeAsync(phases);
             await dbContext.SaveChangesAsync();

@@ -33,7 +33,7 @@ namespace FollwUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("byProfileId/{id:Guid}")]
+        [Route("ByProfileId/{id:Guid}")]
         public async Task<IActionResult> GetAllByProfileId([FromRoute] Guid id)
         {
             var rolesDomainModel = await roleRepository.GetAllByProfileIdAsync(id);
@@ -44,7 +44,7 @@ namespace FollwUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("byTaskId/{id:Guid}")]
+        [Route("ByTaskId/{id:Guid}")]
         public async Task<IActionResult> GetAllByTaskId([FromRoute] Guid id)
         {
             var rolesDomainModel = await roleRepository.GetAllByTaskIdAsync(id);

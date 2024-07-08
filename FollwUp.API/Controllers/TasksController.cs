@@ -53,7 +53,7 @@ namespace FollwUp.API.Controllers
                 Status = p.Status,
                 TaskId = taskDto.Id
             }).ToList();
-            var phaseDto = await PhasesController.Create(addPhaseRequestDto);
+            var phaseDto = await PhasesController.CreatePhases(addPhaseRequestDto);
             if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
                 taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
 
@@ -115,7 +115,7 @@ namespace FollwUp.API.Controllers
 
 
         [HttpGet]
-        [Route("byProfileId/{id:Guid}")]
+        [Route("ByProfileId/{id:Guid}")]
         public async Task<IActionResult> GetAllByProfileId([FromRoute] Guid id)
         {
             var rolesDto = await rolesController.GetAllByProfileId(id);
