@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FollwUp.API.Enums;
 using FollwUp.API.Model.Domain;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
@@ -96,12 +97,33 @@ namespace FollwUp.API.Controllers
         }
 
         [HttpPut]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdatePhaseRequestDto updatePhaseRequestDto)
+        [Route("{id:Guid}/")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, bool statusOnly, [FromBody] UpdatePhaseRequestDto updatePhaseRequestDto)
         {
             var phaseDomainModel = mapper.Map<Phase>(updatePhaseRequestDto);
 
             await phaseRepository.UpdateAsync(id, phaseDomainModel);
+
+            if (statusOnly && phaseDomainModel.Status == TaskPhaseStatus.InProgress)
+            {
+                // get all by task id
+                var phasesDomainModel = await phaseRepository.GetAllByTaskIdAsync(phaseDomainModel.TaskId);
+
+                for (int i = 0; i < phasesDomainModel.Count; i++)
+                {
+                    if (phasesDomainModel[i].Number < phaseDomainModel.Number)
+                        phasesDomainModel[i].Status = TaskPhaseStatus.Completed;
+
+                    if (phasesDomainModel[i].Number > phaseDomainModel.Number)
+                        phasesDomainModel[i].Status = TaskPhaseStatus.Pending;
+                }
+
+                // update all phases
+                foreach (var phase in phasesDomainModel)
+                {
+                    await phaseRepository.UpdateAsync(phase.id, phase);
+                }
+            }
 
             var phaseDto = mapper.Map<PhaseDto>(phaseDomainModel);
 
