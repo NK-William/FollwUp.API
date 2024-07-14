@@ -86,6 +86,7 @@ namespace FollwUp.API.Controllers
 
             if (taskDomainModel != null)
             {
+                // ToDo: Clean this code
                 var taskDto = mapper.Map<TaskDto>(taskDomainModel);
 
                 // Get Phases by task id
@@ -132,6 +133,7 @@ namespace FollwUp.API.Controllers
 
                         if (taskDomainModel != null)
                         {
+                            // ToDo: Clean this code
                             var taskDto = mapper.Map<TaskDto>(taskDomainModel);
 
                             // Get Phases by task id
@@ -149,15 +151,53 @@ namespace FollwUp.API.Controllers
                             tasks.Add(taskDto);
                         }
                     }
-                    return Ok(tasks);
                 }
-                return Ok(new List<TaskDto>());
+                return Ok(roles);
             }
-            else
+            return BadRequest("No tasks found for the given profile id");
+        }
+
+        [HttpGet]
+        [Route("ByPhoneNumber/{phoneNumber}")]
+        public async Task<IActionResult> GetAllByPhoneNumber([FromRoute] string phoneNumber)
+        {
+            var invitationsDto = await invitationsController.GetAllByPhoneNumber(phoneNumber);
+
+            if (invitationsDto is OkObjectResult okInvitationsResult && okInvitationsResult.Value != null)
             {
-                // Something went wrong
-                return BadRequest();
+                List<InvitationDto> invitations = (List<InvitationDto>)okInvitationsResult.Value;
+                if (!invitations.Any())
+                    return BadRequest("No tasks found for the given phone number");
+
+                var tasks = new List<TaskDto>();
+                foreach (var invitation in invitations)
+                {
+                    var taskId = invitation.TaskId;
+                    var taskDomainModel = await taskRepository.GetByIdAsync(taskId);
+
+                    if (taskDomainModel != null)
+                    {
+                        // ToDo: Clean this code
+                        var taskDto = mapper.Map<TaskDto>(taskDomainModel);
+
+                        // Get Phases by task id
+                        var phaseDto = await PhasesController.GetAllByTaskId(taskId);
+                        if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
+                            taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
+
+                        // Get Role by task id
+                        var roleDto = await rolesController.GetAllByTaskId(taskId);
+                        if (roleDto is OkObjectResult okRoleResult && okRoleResult.Value != null)
+                            taskDto.Roles = new List<RoleDto>((List<RoleDto>)okRoleResult.Value);
+
+                        taskDto.Invitation = invitation;
+
+                        tasks.Add(taskDto);
+                    }
+                }
+                return Ok(tasks);
             }
+            return BadRequest("No tasks found for the given phone number");
         }
 
         [HttpDelete]

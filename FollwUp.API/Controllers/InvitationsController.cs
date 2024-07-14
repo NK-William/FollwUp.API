@@ -42,5 +42,16 @@ namespace FollwUp.API.Controllers
 
             return Ok(invitationDto);
         }
+
+        [HttpGet]
+        [Route("ByPhoneNumber/{phoneNumber}")]
+        public async Task<IActionResult> GetAllByPhoneNumber([FromRoute] string phoneNumber)
+        {
+            var invitationsDomainModel = await invitationRepository.GetAllByPhoneNumber(phoneNumber);
+
+            var invitationsDto = mapper.Map<List<InvitationDto>>(invitationsDomainModel);
+
+            return Ok(invitationsDto);
+        }
     }
 }
