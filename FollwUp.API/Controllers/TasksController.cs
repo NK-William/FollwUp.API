@@ -103,7 +103,6 @@ namespace FollwUp.API.Controllers
                 if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
                     taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
 
-
                 return Ok(taskDto);
             }
             else
@@ -159,6 +158,20 @@ namespace FollwUp.API.Controllers
                 // Something went wrong
                 return BadRequest();
             }
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var deletedTaskDomainModel = await taskRepository.DeleteAsync(id);
+
+            if (deletedTaskDomainModel == null)
+                return NotFound();
+
+            var deletedTaskDto = mapper.Map<TaskDto>(deletedTaskDomainModel);
+
+            return Ok(deletedTaskDto);
         }
     }
 }

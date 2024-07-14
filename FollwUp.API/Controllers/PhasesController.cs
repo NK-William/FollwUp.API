@@ -130,7 +130,6 @@ namespace FollwUp.API.Controllers
             return Ok(phaseDto);
         }
 
-        // ToDo: Next implement the Delete method
         [HttpDelete]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)

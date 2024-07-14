@@ -21,6 +21,18 @@ namespace FollwUp.API.Repositories
             return task;
         }
 
+        public async Task<Domain.Task?> DeleteAsync(Guid id)
+        {
+            var existingTask = await dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+
+            if (existingTask == null)
+                return null;
+
+            dbContext.Tasks.Remove(existingTask);
+            await dbContext.SaveChangesAsync();
+            return existingTask;
+        }
+
         public async Task<Domain.Task?> GetByIdAsync(Guid id)
         {
             return await dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
