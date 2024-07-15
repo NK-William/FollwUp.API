@@ -4,7 +4,7 @@ namespace FollwUp.API.Model.DTO
 {
     public class AcceptTaskRequestDto
     {
-        public required UpdateTaskRequestDto UpdateTaskRequestDto { get; set; }
+        public required UpdateTaskRequestDto Task { get; set; }
         public Guid ProfileId { get; set; }
         public Guid InvitationId { get; set; }
         public RoleType RoleType { get; set; }

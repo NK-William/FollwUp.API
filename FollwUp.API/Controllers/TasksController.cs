@@ -204,7 +204,7 @@ namespace FollwUp.API.Controllers
         [Route("Accept/{id:Guid}")]
         public async Task<IActionResult> Accept([FromRoute] Guid id, [FromBody] AcceptTaskRequestDto acceptTaskRequestDto)
         {
-            var taskDomainModel = mapper.Map<Domain.Task>(acceptTaskRequestDto.UpdateTaskRequestDto);
+            var taskDomainModel = mapper.Map<Domain.Task>(acceptTaskRequestDto.Task);
 
             taskDomainModel = await taskRepository.UpdateAsync(id, taskDomainModel);
 
