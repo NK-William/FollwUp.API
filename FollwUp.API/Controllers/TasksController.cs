@@ -158,7 +158,7 @@ namespace FollwUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("ByPhoneNumber/{phoneNumber}")]
+        [Route("GetPending/{phoneNumber}")]
         public async Task<IActionResult> GetAllByPhoneNumber([FromRoute] string phoneNumber)
         {
             var invitationsDto = await invitationsController.GetAllByPhoneNumber(phoneNumber);
@@ -199,6 +199,23 @@ namespace FollwUp.API.Controllers
             }
             return BadRequest("No tasks found for the given phone number");
         }
+
+        [HttpPut]
+        [Route("Accept/{id:Guid}")]
+        public async Task<IActionResult> Accept([FromRoute] Guid id, [FromBody] AcceptTaskRequestDto acceptTaskRequestDto)
+        {
+            var taskDomainModel = mapper.Map<Domain.Task>(acceptTaskRequestDto.UpdateTaskRequestDto);
+
+            taskDomainModel = await taskRepository.UpdateAsync(id, taskDomainModel);
+
+            if(taskDomainModel == null)
+                return BadRequest(); // Something went wrong (Enforce validation)
+
+            // Delete Invitation
+            // Create role
+
+            return Ok();
+        }   
 
         [HttpDelete]
         [Route("{id:Guid}")]

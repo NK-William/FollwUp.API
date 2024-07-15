@@ -10,6 +10,7 @@ namespace FollwUp.API.Mappings
         {
             // Task
             CreateMap<AddTaskRequestDto, Domain.Task>().ReverseMap();
+            CreateMap<UpdateTaskRequestDto, Domain.Task>().ReverseMap();
             CreateMap<Domain.Task, TaskDto>().ReverseMap();
 
             // Phase
