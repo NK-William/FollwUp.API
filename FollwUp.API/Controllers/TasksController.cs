@@ -4,6 +4,10 @@ using FollwUp.API.Model.Domain;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Domain = FollwUp.API.Model.Domain;
 
@@ -248,6 +252,8 @@ namespace FollwUp.API.Controllers
             if (rejectTaskRequestDto.InvitationId.Equals(Guid.Empty))
                 return BadRequest("Invitation id is required");
 
+            // Rejecting invitation
+                // If (no Role(s) of roleType View or Tracker -) and got (one invite +) => set Task status to rejected
             var invitationsDto = await invitationsController.GetAllByTask(id);
             List<InvitationDto> invitations = new List<InvitationDto>();
             if (invitationsDto is OkObjectResult okInvitationsResult && okInvitationsResult.Value != null)
@@ -261,6 +267,7 @@ namespace FollwUp.API.Controllers
                 await taskRepository.UpdateAsync(id, taskDomainModel);
             }
 
+            // Delete invite
             await invitationsController.Delete(rejectTaskRequestDto.InvitationId);
 
             return Ok();
