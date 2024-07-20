@@ -33,10 +33,10 @@ namespace FollwUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("ByTaskId/{id:Guid}")]
-        public async Task<IActionResult> GetByTaskId([FromRoute] Guid id)
+        [Route("ByTaskId/{taskId:Guid}")]
+        public async Task<IActionResult> GetByTaskId([FromRoute] Guid taskId)
         {
-            var invitationDomainModel = await invitationRepository.GetByTaskIdAsync(id);
+            var invitationDomainModel = await invitationRepository.GetByTaskIdAsync(taskId);
 
             var invitationDto = mapper.Map<InvitationDto>(invitationDomainModel);
 
@@ -44,10 +44,20 @@ namespace FollwUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("ByPhoneNumber/{phoneNumber}")]
+        [Route("AllByPhoneNumber/{phoneNumber}")]
         public async Task<IActionResult> GetAllByPhoneNumber([FromRoute] string phoneNumber)
         {
-            var invitationsDomainModel = await invitationRepository.GetAllByPhoneNumber(phoneNumber);
+            var invitationsDomainModel = await invitationRepository.GetAllByPhoneNumberAsync(phoneNumber);
+
+            var invitationsDto = mapper.Map<List<InvitationDto>>(invitationsDomainModel);
+
+            return Ok(invitationsDto);
+        }
+        [HttpGet]
+        [Route("AllByTaskId/{taskId:Guid}")]
+        public async Task<IActionResult> GetAllByTask([FromRoute] Guid taskId)
+        {
+            var invitationsDomainModel = await invitationRepository.GetAllByTaskAsync(taskId);
 
             var invitationsDto = mapper.Map<List<InvitationDto>>(invitationsDomainModel);
 

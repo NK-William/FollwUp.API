@@ -22,14 +22,20 @@ namespace FollwUp.API.Repositories
             return invitation;
         }
 
-        public async Task<List<Invitation>> GetAllByPhoneNumber(string phoneNumber)
+        public async Task<List<Invitation>> GetAllByPhoneNumberAsync(string phoneNumber)
         {
             return await dbContext.Invitations.Where(i => i.PhoneNumber == phoneNumber).ToListAsync();
         }
 
-        public async Task<Invitation?> GetByTaskIdAsync(Guid id)
+
+        public Task<List<Invitation>> GetAllByTaskAsync(Guid taskId)
         {
-            return await dbContext.Invitations.FirstOrDefaultAsync(i => i.TaskId == id);
+            return dbContext.Invitations.Where(i => i.TaskId == taskId).ToListAsync();
+        }
+
+        public async Task<Invitation?> GetByTaskIdAsync(Guid taskId)
+        {
+            return await dbContext.Invitations.FirstOrDefaultAsync(i => i.TaskId == taskId);
         }
 
         public async Task<Invitation?> DeleteAsync(Guid id)

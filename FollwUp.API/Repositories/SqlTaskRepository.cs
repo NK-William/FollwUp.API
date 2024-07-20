@@ -51,7 +51,7 @@ namespace FollwUp.API.Repositories
             existingTask.Organization = task.Organization;
             existingTask.Eta = task.Eta;
             existingTask.Color = task.Color;
-            existingTask.Status = Enums.TaskStatus.Accepted;
+            existingTask.Status = task.Status;
             existingTask.Description = task.Description;
 
             await dbContext.SaveChangesAsync();

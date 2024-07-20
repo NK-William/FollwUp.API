@@ -205,6 +205,10 @@ namespace FollwUp.API.Controllers
         [Route("Accept/{id:Guid}")]
         public async Task<IActionResult> Accept([FromRoute] Guid id, [FromBody] AcceptTaskRequestDto acceptTaskRequestDto)
         {
+
+            if (!acceptTaskRequestDto.InvitationId.Equals(Guid.Empty))
+                return BadRequest("Invitation id is required");
+
             var taskDomainModel = mapper.Map<Domain.Task>(acceptTaskRequestDto.Task);
 
             taskDomainModel = await taskRepository.UpdateAsync(id, taskDomainModel);
@@ -214,9 +218,7 @@ namespace FollwUp.API.Controllers
 
             var taskDto = mapper.Map<TaskDto>(taskDomainModel);
 
-            // Delete invitation
-            if (!acceptTaskRequestDto.Equals(Guid.Empty))
-                await invitationsController.Delete(acceptTaskRequestDto.InvitationId);
+            await invitationsController.Delete(acceptTaskRequestDto.InvitationId);
 
             // Create role
             await rolesController.Create(new AddRoleRequestDto
@@ -237,6 +239,31 @@ namespace FollwUp.API.Controllers
                 taskDto.Roles = new List<RoleDto>((List<RoleDto>)okRoleResult.Value);
 
             return Ok(taskDto);
+        }
+
+        [HttpPut]
+        [Route("Reject/{id:Guid}")]
+        public async Task<IActionResult> Reject([FromRoute] Guid id, [FromBody] RejectTaskRequestDto rejectTaskRequestDto)
+        {
+            if (rejectTaskRequestDto.InvitationId.Equals(Guid.Empty))
+                return BadRequest("Invitation id is required");
+
+            var invitationsDto = await invitationsController.GetAllByTask(id);
+            List<InvitationDto> invitations = new List<InvitationDto>();
+            if (invitationsDto is OkObjectResult okInvitationsResult && okInvitationsResult.Value != null)
+                invitations = (List<InvitationDto>)okInvitationsResult.Value;
+
+            // Get Invitations by task id
+            if (invitations != null && invitations.Count == 1) // Only when we've got one invitation then we can update task status
+            {
+                var taskDomainModel = mapper.Map<Domain.Task>(rejectTaskRequestDto.Task);
+                taskDomainModel.Status = Enums.TaskStatus.Rejected;
+                await taskRepository.UpdateAsync(id, taskDomainModel);
+            }
+
+            await invitationsController.Delete(rejectTaskRequestDto.InvitationId);
+
+            return Ok();
         }
 
         [HttpDelete]
