@@ -4,6 +4,7 @@ using FollwUp.API.Model.Domain;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using Domain = FollwUp.API.Model.Domain;
 
 namespace FollwUp.API.Controllers
@@ -208,14 +209,35 @@ namespace FollwUp.API.Controllers
 
             taskDomainModel = await taskRepository.UpdateAsync(id, taskDomainModel);
 
-            if(taskDomainModel == null)
-                return BadRequest(); // Something went wrong (Enforce validation)
+            if (taskDomainModel == null)
+                return NotFound();
 
-            // Delete Invitation
+            var taskDto = mapper.Map<TaskDto>(taskDomainModel);
+
+            // Delete invitation
+            if (!acceptTaskRequestDto.Equals(Guid.Empty))
+                await invitationsController.Delete(acceptTaskRequestDto.InvitationId);
+
             // Create role
+            await rolesController.Create(new AddRoleRequestDto
+            {
+                RoleType = acceptTaskRequestDto.RoleType,
+                TaskId = id,
+                ProfileId = acceptTaskRequestDto.ProfileId
+            });
 
-            return Ok();
-        }   
+            // Get Phases by task id
+            var phaseDto = await PhasesController.GetAllByTaskId(id);
+            if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
+                taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
+
+            // Get Role by task id
+            var roleDto = await rolesController.GetAllByTaskId(id);
+            if (roleDto is OkObjectResult okRoleResult && okRoleResult.Value != null)
+                taskDto.Roles = new List<RoleDto>((List<RoleDto>)okRoleResult.Value);
+
+            return Ok(taskDto);
+        }
 
         [HttpDelete]
         [Route("{id:Guid}")]

@@ -31,5 +31,16 @@ namespace FollwUp.API.Repositories
         {
             return await dbContext.Invitations.FirstOrDefaultAsync(i => i.TaskId == id);
         }
+
+        public async Task<Invitation?> DeleteAsync(Guid id)
+        {
+            var existingInvitation = await dbContext.Invitations.FirstOrDefaultAsync(i => i.Id == id);
+            if (existingInvitation == null)
+                return null;
+
+            dbContext.Invitations.Remove(existingInvitation);
+            await dbContext.SaveChangesAsync();
+            return existingInvitation;
+        }
     }
 }

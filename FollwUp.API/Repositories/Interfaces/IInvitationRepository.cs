@@ -7,5 +7,6 @@ namespace FollwUp.API.Repositories.Interfaces
         Task<Invitation> CreateAsync(Invitation invitation);
         Task<Invitation?> GetByTaskIdAsync(Guid id);
         Task<List<Invitation>> GetAllByPhoneNumber(string phoneNumber);
+        Task<Invitation?> DeleteAsync(Guid id);
     }
 }

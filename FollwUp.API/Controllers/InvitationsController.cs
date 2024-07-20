@@ -53,5 +53,19 @@ namespace FollwUp.API.Controllers
 
             return Ok(invitationsDto);
         }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var deletedInvitationDomainModel = await invitationRepository.DeleteAsync(id);
+
+            if(deletedInvitationDomainModel == null)
+                return NotFound();
+
+            var deletedInvitationDto = mapper.Map<InvitationDto>(deletedInvitationDomainModel);
+
+            return Ok(deletedInvitationDto);
+        }
     }
 }
