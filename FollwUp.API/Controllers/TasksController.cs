@@ -254,13 +254,23 @@ namespace FollwUp.API.Controllers
 
             // Rejecting invitation
                 // If (no Role(s) of roleType View or Tracker -) and got (one invite +) => set Task status to rejected
+
+            // Get Roles by task id
+            var rolesDto = await rolesController.GetAllByTaskId(id);
+            List<RoleDto> roles = new List<RoleDto>();
+            if (rolesDto is OkObjectResult okRolesResult && okRolesResult.Value != null)
+                roles = (List<RoleDto>)okRolesResult.Value;
+
+            // Get Invitations by task id
             var invitationsDto = await invitationsController.GetAllByTask(id);
             List<InvitationDto> invitations = new List<InvitationDto>();
             if (invitationsDto is OkObjectResult okInvitationsResult && okInvitationsResult.Value != null)
                 invitations = (List<InvitationDto>)okInvitationsResult.Value;
 
-            // Get Invitations by task id
-            if (invitations != null && invitations.Count == 1) // Only when we've got one invitation then we can update task status
+            // If no Role(s) of roleType View or Tracker
+            var hasViewOrTrackerRole = roles.Exists(r => r.RoleType == RoleType.Viewer || r.RoleType == RoleType.Tracker);
+
+            if (invitations.Count == 1 && !hasViewOrTrackerRole)
             {
                 var taskDomainModel = mapper.Map<Domain.Task>(rejectTaskRequestDto.Task);
                 taskDomainModel.Status = Enums.TaskStatus.Rejected;
