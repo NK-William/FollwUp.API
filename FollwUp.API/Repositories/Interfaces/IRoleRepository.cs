@@ -8,6 +8,7 @@ namespace FollwUp.API.Repositories.Interfaces
 
         Task<List<Role>> GetAllByProfileIdAsync(Guid id);
         Task<List<Role>> GetAllByTaskIdAsync(Guid id);
+        Task<Role?> DeleteAsync(Guid id);
 
     }
 }

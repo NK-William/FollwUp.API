@@ -53,5 +53,36 @@ namespace FollwUp.API.Controllers
 
             return Ok(rolesDto);
         }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var roleDomainModel = await roleRepository.DeleteAsync(id);
+
+            var roleDto = mapper.Map<RoleDto>(roleDomainModel);
+
+            return Ok(roleDto);
+        }
+
+        [HttpDelete]
+        [Route("ByTaskId/{taskId:Guid}")]
+        public async Task<IActionResult> DeleteAllByTaskId([FromRoute] Guid taskId)
+        {
+            var rolesDomainModel = await roleRepository.GetAllByTaskIdAsync(taskId);
+
+            var deletedRolesDomainModel = new List<Role>();
+
+            foreach (var role in rolesDomainModel)
+            {
+                var deletedRoleDomainModel = await roleRepository.DeleteAsync(role.Id);
+                if (deletedRoleDomainModel != null)
+                    deletedRolesDomainModel.Add(deletedRoleDomainModel);
+            }
+
+            var deletedRolesDto = mapper.Map<List<Role>>(deletedRolesDomainModel);
+
+            return Ok(deletedRolesDto);
+        }
     }
 }

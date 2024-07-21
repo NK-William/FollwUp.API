@@ -162,5 +162,25 @@ namespace FollwUp.API.Controllers
             return Ok(deletedPhaseDto);
         }
 
+        [HttpDelete]
+        [Route("ByTaskId/{taskId:Guid}")]
+        public async Task<IActionResult> DeleteAllByTaskId([FromRoute] Guid taskId)
+        {
+            var phasesDomainModel = await phaseRepository.GetAllByTaskIdAsync(taskId);
+
+            var deletedPhasesDomainModel = new List<Phase>();
+
+            foreach (var phase in phasesDomainModel)
+            {
+                var deletedPhaseDomainModel = await phaseRepository.DeleteAsync(phase.id);
+                if (deletedPhaseDomainModel != null)
+                    deletedPhasesDomainModel.Add(deletedPhaseDomainModel);
+            }
+
+            var deletedPhasesDto = mapper.Map<List<PhaseDto>>(deletedPhasesDomainModel);
+
+            return Ok(deletedPhasesDto);
+        }
+
     }
 }

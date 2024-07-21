@@ -1,14 +1,9 @@
 ﻿using AutoMapper;
 using FollwUp.API.Enums;
-using FollwUp.API.Model.Domain;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using Domain = FollwUp.API.Model.Domain;
 
 namespace FollwUp.API.Controllers
@@ -152,7 +147,7 @@ namespace FollwUp.API.Controllers
                                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
 
                             taskDto.Roles = roles.Where(r => r.TaskId == taskDto.Id).ToList();
-
+                            
                             tasks.Add(taskDto);
                         }
                     }

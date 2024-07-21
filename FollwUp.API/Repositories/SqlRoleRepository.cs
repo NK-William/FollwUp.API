@@ -30,5 +30,16 @@ namespace FollwUp.API.Repositories
         {
             return await dbContext.Roles.Where(r => r.TaskId == id).ToListAsync();
         }
+        public async Task<Role?> DeleteAsync(Guid id)
+        {
+            var existingRole = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == id);
+
+            if (existingRole == null)
+                return null;
+
+            dbContext.Roles.Remove(existingRole);
+            await dbContext.SaveChangesAsync();
+            return existingRole;
+        }
     }
 }
