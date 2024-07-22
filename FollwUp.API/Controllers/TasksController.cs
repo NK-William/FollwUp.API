@@ -14,16 +14,16 @@ namespace FollwUp.API.Controllers
     {
         private readonly IMapper mapper;
         private readonly ITaskRepository taskRepository;
-        private readonly PhasesController PhasesController;
+        private readonly PhasesController phasesController;
         private readonly RolesController rolesController;
         private readonly InvitationsController invitationsController;
 
-        public TasksController(IMapper mapper, ITaskRepository taskRepository, PhasesController PhasesController,
+        public TasksController(IMapper mapper, ITaskRepository taskRepository, PhasesController phasesController,
             RolesController rolesController, InvitationsController invitationsController)
         {
             this.mapper = mapper;
             this.taskRepository = taskRepository;
-            this.PhasesController = PhasesController;
+            this.phasesController = phasesController;
             this.rolesController = rolesController;
             this.invitationsController = invitationsController;
         }
@@ -53,7 +53,7 @@ namespace FollwUp.API.Controllers
                 Status = p.Status,
                 TaskId = taskDto.Id
             }).ToList();
-            var phaseDto = await PhasesController.CreatePhases(addPhaseRequestDto);
+            var phaseDto = await phasesController.CreatePhases(addPhaseRequestDto);
             if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
                 taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
 
@@ -90,7 +90,7 @@ namespace FollwUp.API.Controllers
                 var taskDto = mapper.Map<TaskDto>(taskDomainModel);
 
                 // Get Phases by task id
-                var phaseDto = await PhasesController.GetAllByTaskId(id);
+                var phaseDto = await phasesController.GetAllByTaskId(id);
                 if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
                     taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
 
@@ -137,7 +137,7 @@ namespace FollwUp.API.Controllers
                             var taskDto = mapper.Map<TaskDto>(taskDomainModel);
 
                             // Get Phases by task id
-                            var phaseDto = await PhasesController.GetAllByTaskId(taskId);
+                            var phaseDto = await phasesController.GetAllByTaskId(taskId);
                             if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
                                 taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
 
@@ -181,7 +181,7 @@ namespace FollwUp.API.Controllers
                         var taskDto = mapper.Map<TaskDto>(taskDomainModel);
 
                         // Get Phases by task id
-                        var phaseDto = await PhasesController.GetAllByTaskId(taskId);
+                        var phaseDto = await phasesController.GetAllByTaskId(taskId);
                         if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
                             taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
 
@@ -198,6 +198,22 @@ namespace FollwUp.API.Controllers
                 return Ok(tasks);
             }
             return BadRequest("No tasks found for the given phone number");
+        }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTaskRequestDto updateTaskRequestDto)
+        {
+            var taskDomainModel = mapper.Map<Domain.Task>(updateTaskRequestDto);
+
+            taskDomainModel = await taskRepository.UpdateAsync(id, taskDomainModel);
+
+            if (taskDomainModel == null)
+                return NotFound();
+
+            var taskDto = mapper.Map<TaskDto>(taskDomainModel);
+
+            return Ok(taskDto);
         }
 
         [HttpPut]
@@ -228,7 +244,7 @@ namespace FollwUp.API.Controllers
             });
 
             // Get Phases by task id
-            var phaseDto = await PhasesController.GetAllByTaskId(id);
+            var phaseDto = await phasesController.GetAllByTaskId(id);
             if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
                 taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
 

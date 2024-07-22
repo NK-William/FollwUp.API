@@ -7,5 +7,6 @@ namespace FollwUp.API.Model.DTO
         public required string PhoneNumber { get; set; }
         public RoleType RoleType { get; set; }
         public Guid TaskId { get; set; }
+        public UpdateTaskRequestDto? Task { get; set; }
     }
 }

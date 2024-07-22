@@ -4,6 +4,7 @@ using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace FollwUp.API.Controllers
 {
@@ -13,16 +14,30 @@ namespace FollwUp.API.Controllers
     {
         private readonly IMapper mapper;
         private readonly IInvitationRepository invitationRepository;
+        private readonly ITaskRepository taskRepository;
 
-        public InvitationsController(IMapper mapper, IInvitationRepository invitationRepository)
+        public InvitationsController(IMapper mapper, IInvitationRepository invitationRepository, ITaskRepository taskRepository)
         {
             this.mapper = mapper;
             this.invitationRepository = invitationRepository;
+            this.taskRepository = taskRepository;
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddInvitationRequestDto addInvitationRequestDto)
         {
+            if(addInvitationRequestDto.TaskId.Equals(Guid.Empty))
+                return BadRequest("TaskId is required");
+
+            if (addInvitationRequestDto.Task != null && addInvitationRequestDto.Task.Status == Enums.TaskStatus.Rejected)
+            {
+                var taskDomainModel = mapper.Map<Model.Domain.Task>(addInvitationRequestDto.Task);
+                taskDomainModel.Status = Enums.TaskStatus.Pending;
+                await taskRepository.UpdateAsync(addInvitationRequestDto.TaskId, taskDomainModel);
+            }
+
+            addInvitationRequestDto.Task = null;
+
             var invitationDomainModel = mapper.Map<Invitation>(addInvitationRequestDto);
 
             await invitationRepository.CreateAsync(invitationDomainModel);
