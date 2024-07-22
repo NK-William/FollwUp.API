@@ -147,7 +147,7 @@ namespace FollwUp.API.Controllers
                                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
 
                             taskDto.Roles = roles.Where(r => r.TaskId == taskDto.Id).ToList();
-                            
+
                             tasks.Add(taskDto);
                         }
                     }
@@ -248,7 +248,7 @@ namespace FollwUp.API.Controllers
                 return BadRequest("Invitation id is required");
 
             // Rejecting invitation
-                // If (no Role(s) of roleType View or Tracker -) and got (one invite +) => set Task status to rejected
+            // If (no Role(s) of roleType View or Tracker -) and got (one invite +) => set Task status to rejected
 
             // Get Roles by task id
             var rolesDto = await rolesController.GetAllByTaskId(id);
@@ -274,6 +274,41 @@ namespace FollwUp.API.Controllers
 
             // Delete invite
             await invitationsController.Delete(rejectTaskRequestDto.InvitationId);
+
+            return Ok();
+        }
+
+
+        [HttpPut]
+        [Route("Disconnect/{id:Guid}")]
+        public async Task<IActionResult> Disconnect([FromRoute] Guid id, DisconnectTaskRequestDto disconnectTaskRequestDto)
+        {
+            if (disconnectTaskRequestDto.RoleId.Equals(Guid.Empty))
+                return BadRequest("Role id is required");
+
+            await rolesController.Delete(disconnectTaskRequestDto.RoleId);
+
+            // Get Roles by task id
+            var rolesDto = await rolesController.GetAllByTaskId(id);
+            List<RoleDto> roles = new List<RoleDto>();
+            if (rolesDto is OkObjectResult okRolesResult && okRolesResult.Value != null)
+                roles = (List<RoleDto>)okRolesResult.Value;
+
+            // Get Invitations by task id
+            var invitationsDto = await invitationsController.GetAllByTask(id);
+            List<InvitationDto> invitations = new List<InvitationDto>();
+            if (invitationsDto is OkObjectResult okInvitationsResult && okInvitationsResult.Value != null)
+                invitations = (List<InvitationDto>)okInvitationsResult.Value;
+
+            // If no Role(s) of roleType View or Tracker
+            var hasViewOrTrackerRole = roles.Exists(r => r.RoleType == RoleType.Viewer || r.RoleType == RoleType.Tracker);
+
+            if (!invitations.Any() && !hasViewOrTrackerRole)
+            {
+                var taskDomainModel = mapper.Map<Domain.Task>(disconnectTaskRequestDto.Task);
+                taskDomainModel.Status = Enums.TaskStatus.Rejected;
+                await taskRepository.UpdateAsync(id, taskDomainModel);
+            }
 
             return Ok();
         }
