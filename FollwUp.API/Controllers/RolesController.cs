@@ -23,6 +23,12 @@ namespace FollwUp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddRoleRequestDto addRoleRequestDto)
         {
+            if(addRoleRequestDto.TaskId.Equals(Guid.Empty))
+                return BadRequest("TaskId must be valid.");
+
+            if (addRoleRequestDto.ProfileId.Equals(Guid.Empty))
+                return BadRequest("ProfileId must be valid.");
+
             var roleDomainModel = mapper.Map<Role>(addRoleRequestDto);
 
             await roleRepository.CreateAsync(roleDomainModel);

@@ -30,10 +30,7 @@ namespace FollwUp.API.Controllers
                 return BadRequest("Task is required");
 
             if (addInvitationRequestDto.TaskId.Equals(Guid.Empty))
-                return BadRequest("TaskId is required");
-
-            if (addInvitationRequestDto.Task.Eta < DateTime.Today)
-                return BadRequest("Eta cannot be in the past");
+                return BadRequest("TaskId must be valid");
 
             if (addInvitationRequestDto.Task != null && addInvitationRequestDto.Task.Status == Enums.TaskStatus.Rejected)
             {
@@ -58,7 +55,7 @@ namespace FollwUp.API.Controllers
         public async Task<IActionResult> GetByTaskId([FromRoute] Guid taskId)
         {
             if (taskId.Equals(Guid.Empty))
-                return BadRequest("TaskId is required");
+                return BadRequest("TaskId must be valid");
 
             var invitationDomainModel = await invitationRepository.GetByTaskIdAsync(taskId);
 
@@ -86,7 +83,7 @@ namespace FollwUp.API.Controllers
         public async Task<IActionResult> GetAllByTask([FromRoute] Guid taskId)
         {
             if (taskId.Equals(Guid.Empty))
-                return BadRequest("TaskId is required");
+                return BadRequest("TaskId must be valid");
 
             var invitationsDomainModel = await invitationRepository.GetAllByTaskAsync(taskId);
 

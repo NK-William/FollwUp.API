@@ -4,6 +4,7 @@ using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using System.Text.RegularExpressions;
 using Domain = FollwUp.API.Model.Domain;
 
 namespace FollwUp.API.Controllers
@@ -31,6 +32,12 @@ namespace FollwUp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddTaskRequestDto addTaskRequestDto)
         {
+            if(addTaskRequestDto.ProfileId.Equals(Guid.Empty))
+                return BadRequest("ProfileId must be valid.");
+
+            if (addTaskRequestDto.Eta < DateTime.Today)
+                return BadRequest("ETA cannot be in the past");
+
             var taskDomainModel = mapper.Map<Domain.Task>(addTaskRequestDto);
 
             await taskRepository.CreateAsync(taskDomainModel);
@@ -108,8 +115,7 @@ namespace FollwUp.API.Controllers
             }
             else
             {
-                // Something went wrong
-                return BadRequest();
+                return NotFound();
             }
         }
 
@@ -154,7 +160,7 @@ namespace FollwUp.API.Controllers
                 }
                 return Ok(roles);
             }
-            return BadRequest("No tasks found for the given profile id");
+            return NotFound("No tasks found for the given profile id");
         }
 
         [HttpGet]
@@ -167,7 +173,7 @@ namespace FollwUp.API.Controllers
             {
                 List<InvitationDto> invitations = (List<InvitationDto>)okInvitationsResult.Value;
                 if (!invitations.Any())
-                    return BadRequest("No tasks found for the given phone number");
+                    return NotFound("No tasks found for the given phone number");
 
                 var tasks = new List<TaskDto>();
                 foreach (var invitation in invitations)
@@ -221,8 +227,11 @@ namespace FollwUp.API.Controllers
         public async Task<IActionResult> Accept([FromRoute] Guid id, [FromBody] AcceptTaskRequestDto acceptTaskRequestDto)
         {
 
-            if (!acceptTaskRequestDto.InvitationId.Equals(Guid.Empty))
-                return BadRequest("Invitation id is required");
+            if (acceptTaskRequestDto.InvitationId.Equals(Guid.Empty))
+                return BadRequest("Invitation must be valid");
+
+            if(acceptTaskRequestDto.ProfileId.Equals(Guid.Empty))
+                return BadRequest("ProfileId must be valid.");
 
             var taskDomainModel = mapper.Map<Domain.Task>(acceptTaskRequestDto.Task);
 
@@ -261,7 +270,7 @@ namespace FollwUp.API.Controllers
         public async Task<IActionResult> Reject([FromRoute] Guid id, [FromBody] RejectTaskRequestDto rejectTaskRequestDto)
         {
             if (rejectTaskRequestDto.InvitationId.Equals(Guid.Empty))
-                return BadRequest("InvitationId is required");
+                return BadRequest("InvitationId must be valid");
 
             // Rejecting invitation
             // If (no Role(s) of roleType View or Tracker -) and got (one invite +) => set Task status to rejected
@@ -300,7 +309,7 @@ namespace FollwUp.API.Controllers
         public async Task<IActionResult> Disconnect([FromRoute] Guid id, DisconnectTaskRequestDto disconnectTaskRequestDto)
         {
             if (disconnectTaskRequestDto.RoleId.Equals(Guid.Empty))
-                return BadRequest("Role id is required");
+                return BadRequest("Role must be valid");
 
             await rolesController.Delete(disconnectTaskRequestDto.RoleId);
 

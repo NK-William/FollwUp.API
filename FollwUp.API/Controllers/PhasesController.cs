@@ -23,6 +23,8 @@ namespace FollwUp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddPhaseRequestDto addPhaseRequestDto)
         {
+            if(addPhaseRequestDto.TaskId.Equals(Guid.Empty))
+                return BadRequest("TaskId must be valid.");
 
             var phaseDomainModel = mapper.Map<Phase>(addPhaseRequestDto);
 
@@ -76,6 +78,11 @@ namespace FollwUp.API.Controllers
         [Route("List")]
         public async Task<IActionResult> CreatePhases([FromBody] List<AddPhaseRequestDto> addPhasesRequestDto)
         {
+            if (addPhasesRequestDto.Exists(dto => dto.TaskId.Equals(Guid.Empty)))
+            {
+                return BadRequest("All items should have a valid TaskId");
+            }
+
             var phasesDomainModel = mapper.Map<List<Phase>>(addPhasesRequestDto);
 
             await phaseRepository.CreatePhasesAsync(phasesDomainModel);
@@ -86,7 +93,7 @@ namespace FollwUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("ByTaskId/{id:Guid}")]
+        [Route("GetAllByTaskId/{id:Guid}")]
         public async Task<IActionResult> GetAllByTaskId([FromRoute] Guid id)
         {
             var phasesDomainModel = await phaseRepository.GetAllByTaskIdAsync(id);
@@ -100,6 +107,12 @@ namespace FollwUp.API.Controllers
         [Route("{id:Guid}/")]
         public async Task<IActionResult> Update([FromRoute] Guid id, bool statusOnly, [FromBody] UpdatePhaseRequestDto updatePhaseRequestDto)
         {
+            if(updatePhaseRequestDto.TaskId.Equals(Guid.Empty))
+                return BadRequest("TaskId must be valid.");
+
+            if(id.Equals(Guid.Empty))
+                return BadRequest("Id must be valid.");
+
             var phaseDomainModel = mapper.Map<Phase>(updatePhaseRequestDto);
 
             await phaseRepository.UpdateAsync(id, phaseDomainModel);
