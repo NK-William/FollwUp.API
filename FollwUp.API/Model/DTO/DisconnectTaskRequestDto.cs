@@ -1,8 +1,13 @@
-﻿namespace FollwUp.API.Model.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FollwUp.API.Model.DTO
 {
     public class DisconnectTaskRequestDto
     {
-        public required UpdateTaskRequestDto Task { get; set; }
+        [Required]
+        public UpdateTaskRequestDto Task { get; set; }
+
+        [Required]
         public Guid RoleId { get; set; }
 
         public DisconnectTaskRequestDto()

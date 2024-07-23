@@ -26,8 +26,14 @@ namespace FollwUp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddInvitationRequestDto addInvitationRequestDto)
         {
-            if(addInvitationRequestDto.TaskId.Equals(Guid.Empty))
+            if (addInvitationRequestDto.Task == null)
+                return BadRequest("Task is required");
+
+            if (addInvitationRequestDto.TaskId.Equals(Guid.Empty))
                 return BadRequest("TaskId is required");
+
+            if (addInvitationRequestDto.Task.Eta < DateTime.Today)
+                return BadRequest("Eta cannot be in the past");
 
             if (addInvitationRequestDto.Task != null && addInvitationRequestDto.Task.Status == Enums.TaskStatus.Rejected)
             {
@@ -51,6 +57,9 @@ namespace FollwUp.API.Controllers
         [Route("ByTaskId/{taskId:Guid}")]
         public async Task<IActionResult> GetByTaskId([FromRoute] Guid taskId)
         {
+            if (taskId.Equals(Guid.Empty))
+                return BadRequest("TaskId is required");
+
             var invitationDomainModel = await invitationRepository.GetByTaskIdAsync(taskId);
 
             var invitationDto = mapper.Map<InvitationDto>(invitationDomainModel);
@@ -62,16 +71,23 @@ namespace FollwUp.API.Controllers
         [Route("AllByPhoneNumber/{phoneNumber}")]
         public async Task<IActionResult> GetAllByPhoneNumber([FromRoute] string phoneNumber)
         {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+                return BadRequest("PhoneNumber is required");
+
             var invitationsDomainModel = await invitationRepository.GetAllByPhoneNumberAsync(phoneNumber);
 
             var invitationsDto = mapper.Map<List<InvitationDto>>(invitationsDomainModel);
 
             return Ok(invitationsDto);
         }
+
         [HttpGet]
         [Route("AllByTaskId/{taskId:Guid}")]
         public async Task<IActionResult> GetAllByTask([FromRoute] Guid taskId)
         {
+            if (taskId.Equals(Guid.Empty))
+                return BadRequest("TaskId is required");
+
             var invitationsDomainModel = await invitationRepository.GetAllByTaskAsync(taskId);
 
             var invitationsDto = mapper.Map<List<InvitationDto>>(invitationsDomainModel);
@@ -85,7 +101,7 @@ namespace FollwUp.API.Controllers
         {
             var deletedInvitationDomainModel = await invitationRepository.DeleteAsync(id);
 
-            if(deletedInvitationDomainModel == null)
+            if (deletedInvitationDomainModel == null)
                 return NotFound();
 
             var deletedInvitationDto = mapper.Map<InvitationDto>(deletedInvitationDomainModel);

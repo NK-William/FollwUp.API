@@ -261,7 +261,7 @@ namespace FollwUp.API.Controllers
         public async Task<IActionResult> Reject([FromRoute] Guid id, [FromBody] RejectTaskRequestDto rejectTaskRequestDto)
         {
             if (rejectTaskRequestDto.InvitationId.Equals(Guid.Empty))
-                return BadRequest("Invitation id is required");
+                return BadRequest("InvitationId is required");
 
             // Rejecting invitation
             // If (no Role(s) of roleType View or Tracker -) and got (one invite +) => set Task status to rejected

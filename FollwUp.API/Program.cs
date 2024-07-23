@@ -8,7 +8,6 @@ using FollwUp.API.Controllers;
 
 // TODO
 // Authentication and Authorization
-// Validate
 
 var builder = WebApplication.CreateBuilder(args);
 
