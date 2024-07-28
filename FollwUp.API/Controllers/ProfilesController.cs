@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FollwUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProfilesController : ControllerBase
     {
         private readonly IMapper mapper;

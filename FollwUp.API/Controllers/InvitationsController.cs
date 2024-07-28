@@ -2,6 +2,7 @@
 using FollwUp.API.Model.Domain;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace FollwUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class InvitationsController : ControllerBase
     {
         private readonly IMapper mapper;

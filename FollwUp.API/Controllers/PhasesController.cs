@@ -3,12 +3,14 @@ using FollwUp.API.Enums;
 using FollwUp.API.Model.Domain;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FollwUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PhasesController : ControllerBase
     {
         private readonly IMapper mapper;

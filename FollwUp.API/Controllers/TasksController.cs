@@ -2,6 +2,7 @@
 using FollwUp.API.Enums;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Text.RegularExpressions;
@@ -11,6 +12,7 @@ namespace FollwUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly IMapper mapper;
