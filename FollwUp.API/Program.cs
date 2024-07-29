@@ -10,9 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 
-// TODO
-// Authentication and Authorization
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
