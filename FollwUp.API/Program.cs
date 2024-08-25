@@ -18,6 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddTransient<PhasesController>();
 builder.Services.AddTransient<RolesController>();
 builder.Services.AddTransient<InvitationsController>();
+builder.Services.AddTransient<ProfilesController>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

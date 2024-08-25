@@ -23,19 +23,13 @@ namespace FollwUp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddProfileRequestDto addProfileRequestDto)
         {
-            try
-            {
-                var profileDomainModel = mapper.Map<Model.Domain.Profile>(addProfileRequestDto);
+            var profileDomainModel = mapper.Map<Model.Domain.Profile>(addProfileRequestDto);
 
-                await profileRepository.CreateAsync(profileDomainModel);
+            await profileRepository.CreateAsync(profileDomainModel);
 
-                var profileDto = mapper.Map<ProfileDto>(profileDomainModel);
+            var profileDto = mapper.Map<ProfileDto>(profileDomainModel);
 
-                return Ok(profileDto);
-            }catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(profileDto);
         }
 
         [HttpGet]
