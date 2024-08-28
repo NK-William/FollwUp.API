@@ -17,9 +17,19 @@ namespace FollwUp.API.Repositories
 
         public async Task<Profile> CreateAsync(Profile profile)
         {
+            var profileExist = await dbContext.Profiles.AnyAsync(p => p.EmailAddress == profile.EmailAddress);
+
+            if (profileExist)
+                throw new InvalidOperationException("Email address specified already exists.");
+
             await dbContext.Profiles.AddAsync(profile);
             await dbContext.SaveChangesAsync();
             return profile;
+        }
+
+        public async Task<Profile?> GetByEmailAsync(string email)
+        {
+            return await dbContext.Profiles.FirstOrDefaultAsync(p => p.EmailAddress == email);
         }
     }
 }

@@ -31,5 +31,19 @@ namespace FollwUp.API.Controllers
 
             return Ok(profileDto);
         }
+
+        [HttpGet]
+        [Route("ByEmail/{email}")]
+        public async Task<IActionResult> GetByEmail([FromRoute] string email)
+        {
+            var profileDomainModel = await profileRepository.GetByEmailAsync(email);
+
+            if (profileDomainModel == null)
+                return NotFound("Profile not found");
+
+            var profileDto = mapper.Map<ProfileDto>(profileDomainModel);
+
+            return Ok(profileDto);
+        }
     }
 }

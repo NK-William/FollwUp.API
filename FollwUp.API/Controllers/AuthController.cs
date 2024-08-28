@@ -12,11 +12,13 @@ namespace FollwUp.API.Controllers
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly ITokenRepository tokenRepository;
+        private readonly ProfilesController profilesController;
 
-        public AuthController(UserManager<IdentityUser> usermanager, ITokenRepository tokenRepository)
+        public AuthController(UserManager<IdentityUser> usermanager, ITokenRepository tokenRepository, ProfilesController profilesController)
         {
             this.userManager = usermanager;
             this.tokenRepository = tokenRepository;
+            this.profilesController = profilesController;
         }
 
         [HttpPost]
@@ -25,16 +27,28 @@ namespace FollwUp.API.Controllers
         {
             var identityUser = new IdentityUser
             {
-                UserName = registerRequestDto.Username,
-                Email = registerRequestDto.Username
+                UserName = registerRequestDto.Email,
+                Email = registerRequestDto.Email
             };
 
             var identityResult = await userManager.CreateAsync(identityUser, registerRequestDto.Password);
 
             if (identityResult.Succeeded)
-                return Ok("User created successfully");
+            {
+                var profileRequestDto = new AddProfileRequestDto
+                {
+                   EmailAddress = registerRequestDto.Email,
+                   FirstName = registerRequestDto.FirstName,
+                   LastName = registerRequestDto.LastName,
+                   PhoneNumber = registerRequestDto.PhoneNumber
+                };
 
-            return BadRequest("Something went wrong.");
+                await profilesController.Create(profileRequestDto);
+
+                return Ok("User created successfully");
+            }
+
+            return BadRequest(identityResult.Errors);
         }
 
         [HttpPost]
@@ -45,16 +59,16 @@ namespace FollwUp.API.Controllers
 
             if (identityUser != null && await userManager.CheckPasswordAsync(identityUser, loginRequestDto.Password))
             {
-                    // Create Token
-                    var jwtToken = tokenRepository.CreateJWTToken(identityUser);
+                // Create Token
+                var jwtToken = tokenRepository.CreateJWTToken(identityUser);
 
-                    var response = new LoginResponseDto
-                    {
-                        JwtToken = jwtToken,
-                    };
+                var response = new LoginResponseDto
+                {
+                    JwtToken = jwtToken,
+                };
 
-                    return Ok(response);
-                
+                return Ok(response);
+
             }
             return BadRequest("Username or password incorrect");
         }

@@ -46,12 +46,6 @@ namespace FollwUp.API.Controllers
 
             var taskDto = mapper.Map<TaskDto>(taskDomainModel);
 
-            if (taskDto == null || taskDto.Id == Guid.Empty)
-            {
-                // Something went wrong
-                return BadRequest();
-            }
-
             // Phase
             List<AddPhaseRequestDto> addPhaseRequestDto = addTaskRequestDto.Phases.Select(p => new AddPhaseRequestDto
             {
