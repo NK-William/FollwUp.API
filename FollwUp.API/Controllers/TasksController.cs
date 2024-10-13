@@ -153,8 +153,9 @@ namespace FollwUp.API.Controllers
                             tasks.Add(taskDto);
                         }
                     }
+                    return Ok(tasks);
                 }
-                return Ok(roles);
+                return Ok("Failed to retrieve tasks due to roles not being defined for a given user");
             }
             return NotFound("No tasks found for the given profile id");
         }
