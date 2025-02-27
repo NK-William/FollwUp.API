@@ -300,6 +300,45 @@ namespace FollwUp.API.Controllers
             return Ok();
         }
 
+        [HttpPut]
+        [Route("Complete/{id:Guid}")]
+        public async Task<IActionResult> Complete([FromRoute] Guid id)
+        {
+            var taskDomainModel = await taskRepository.GetByIdAsync(id);
+
+            if (taskDomainModel == null)
+                return NotFound();
+
+            // Update task status to completed
+            taskDomainModel.Status = Enums.TaskStatus.Completed;
+
+            taskDomainModel = await taskRepository.UpdateAsync(id, taskDomainModel);
+
+            var taskDto = mapper.Map<TaskDto>(taskDomainModel);
+            taskDto.Phases = new List<PhaseDto>();
+
+            // Update all phases to completed
+            var phasesDto = await phasesController.GetAllByTaskId(id);
+            if (phasesDto is OkObjectResult okPhasesResult && okPhasesResult.Value != null)
+            {
+                List<PhaseDto> phases = (List<PhaseDto>)okPhasesResult.Value;
+                foreach (var phase in phases)
+                {
+                    if(phase.Status != TaskPhaseStatus.Completed)
+                    {
+                        var updatePhaseRequestDto = mapper.Map<UpdatePhaseRequestDto>(phase);
+                        updatePhaseRequestDto.Status = TaskPhaseStatus.Completed;
+
+                        await phasesController.Update(phase.id, false, updatePhaseRequestDto);
+                    }
+
+                    taskDto.Phases.Add(phase);
+                }
+            }
+
+            return Ok(taskDto);
+        }
+
 
         [HttpPut]
         [Route("Disconnect/{id:Guid}")]
