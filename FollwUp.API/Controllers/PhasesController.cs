@@ -15,11 +15,13 @@ namespace FollwUp.API.Controllers
     {
         private readonly IMapper mapper;
         private readonly IPhaseRepository phaseRepository;
+        private readonly ITaskRepository taskRepository;
 
-        public PhasesController(IMapper mapper, IPhaseRepository phaseRepository)
+        public PhasesController(IMapper mapper, IPhaseRepository phaseRepository, ITaskRepository taskRepository)
         {
             this.mapper = mapper;
             this.phaseRepository = phaseRepository;
+            this.taskRepository = taskRepository;
         }
 
         [HttpPost]
@@ -31,6 +33,21 @@ namespace FollwUp.API.Controllers
             var phaseDomainModel = mapper.Map<Phase>(addPhaseRequestDto);
 
             await phaseRepository.CreateAsync(phaseDomainModel);
+
+            var foundTaskCompleted = false;
+
+            // TODO Code1::: This code is duplicated
+            //Revert task status to pending if is currently completed
+            var taskDomainModel = await taskRepository.GetByIdAsync(addPhaseRequestDto.TaskId);
+            if(taskDomainModel != null)
+            {
+                if(taskDomainModel.Status == Enums.TaskStatus.Completed)
+                {
+                    foundTaskCompleted = true;
+                    taskDomainModel.Status = Enums.TaskStatus.Pending;
+                    await taskRepository.UpdateAsync(addPhaseRequestDto.TaskId, taskDomainModel);
+                }
+            }
 
             // get all by task id
             var phasesDomainModel = await phaseRepository.GetAllByTaskIdAsync(addPhaseRequestDto.TaskId);
@@ -51,9 +68,16 @@ namespace FollwUp.API.Controllers
                         // Editing new phase
                         phasesDomainModel[i] = phaseDomainModel;
 
+                        // Keep status of old phase
+                        phasesDomainModel[i].Status = container.Status;
+
                         // Editing old phase
                         phasesDomainModel[i + 1] = container;
                         phasesDomainModel[i + 1].Number = currentNumber + 1;
+
+                        if(phasesDomainModel[i].Status == TaskPhaseStatus.InProgress)
+                            phasesDomainModel[i + 1].Status = TaskPhaseStatus.Pending;
+
                         continue;
                     }
 
@@ -68,8 +92,13 @@ namespace FollwUp.API.Controllers
                 {
                     await phaseRepository.UpdateAsync(phase.id, phase);
                 }
-            }
+            }else if(foundTaskCompleted){
+                // We are adding the last phase when the task was completed, so we need to update the status of the last phase to In-Progress
+                var lastPhase = phasesDomainModel[phasesDomainModel.Count - 1];
 
+                lastPhase.Status = TaskPhaseStatus.InProgress;
+                await phaseRepository.UpdateAsync(lastPhase.id, lastPhase);
+            }
 
             var phaseDto = mapper.Map<PhaseDto>(phaseDomainModel);
 
@@ -137,6 +166,18 @@ namespace FollwUp.API.Controllers
                 foreach (var phase in phasesDomainModel)
                 {
                     await phaseRepository.UpdateAsync(phase.id, phase);
+                }
+
+                // TODO Code1::: This code is duplicated
+                //Revert task status to pending if is currently completed
+                var taskDomainModel = await taskRepository.GetByIdAsync(updatePhaseRequestDto.TaskId);
+                if(taskDomainModel != null)
+                {
+                    if(taskDomainModel.Status == Enums.TaskStatus.Completed)
+                    {
+                        taskDomainModel.Status = Enums.TaskStatus.Pending;
+                        await taskRepository.UpdateAsync(updatePhaseRequestDto.TaskId, taskDomainModel);
+                    }
                 }
             }
 

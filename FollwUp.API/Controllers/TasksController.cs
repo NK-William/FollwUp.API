@@ -95,7 +95,7 @@ namespace FollwUp.API.Controllers
                 // Get Phases by task id
                 var phaseDto = await phasesController.GetAllByTaskId(id);
                 if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
-                    taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
+                    taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value).OrderBy(p => p.Number).ToList();
 
                 // Get Role by task id
                 var roleDto = await rolesController.GetAllByTaskId(id);
@@ -141,7 +141,7 @@ namespace FollwUp.API.Controllers
                             // Get Phases by task id
                             var phaseDto = await phasesController.GetAllByTaskId(taskId);
                             if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
-                                taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
+                                taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value).OrderBy(p => p.Number).ToList();;
 
                             // Get Invitation by task id
                             var invitationDto = await invitationsController.GetByTaskId(taskId);
@@ -186,7 +186,7 @@ namespace FollwUp.API.Controllers
                         // Get Phases by task id
                         var phaseDto = await phasesController.GetAllByTaskId(taskId);
                         if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
-                            taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value);
+                            taskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value).OrderBy(p => p.Number).ToList();
 
                         // Get Role by task id
                         var roleDto = await rolesController.GetAllByTaskId(taskId);
