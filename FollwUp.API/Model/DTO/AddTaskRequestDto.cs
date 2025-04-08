@@ -29,6 +29,18 @@ namespace FollwUp.API.Model.DTO
         public string Color { get; set; }
 
         [Required]
+        [MaxLength(1000, ErrorMessage = "Client first name text is too long")]
+         public required string ClientFirstName { get; set; }
+
+        [Required]
+        [MaxLength(1000, ErrorMessage = "Client last name text is too long")]
+        public  required string ClientLastName { get; set; }
+
+        public required string ClientEmail { get; set; }
+        
+        public required string ClientPhone { get; set; }
+
+        [Required]
         public Guid ProfileId { get; set; }
 
         [Required]

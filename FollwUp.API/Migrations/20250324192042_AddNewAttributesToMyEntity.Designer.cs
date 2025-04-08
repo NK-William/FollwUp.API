@@ -4,6 +4,7 @@ using FollwUp.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FollwUp.API.Migrations
 {
     [DbContext(typeof(FollwupDbContext))]
-    partial class FollwupDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250324192042_AddNewAttributesToMyEntity")]
+    partial class AddNewAttributesToMyEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -12,5 +12,11 @@ namespace FollwUp.API.Model.Domain
         public string? Description { get; set; }
         public DateTime Eta { get; set; }
         public required string Color { get; set; }
+
+        // The following properties have been added to cater for first version
+        public required string ClientFirstName { get; set; }
+        public required string ClientLastName { get; set; }
+        public required string ClientEmail { get; set; }
+        public required string ClientPhone { get; set; }
     }
 }

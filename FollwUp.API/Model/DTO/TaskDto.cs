@@ -13,6 +13,10 @@ namespace FollwUp.API.Model.DTO
         public string? Description { get; set; }
         public DateTime Eta { get; set; }
         public required string Color { get; set; }
+        public required string ClientFirstName { get; set; }
+        public  required string ClientLastName { get; set; }
+        public required string ClientEmail { get; set; }
+        public required string ClientPhone { get; set; }
         public required List<PhaseDto> Phases { get; set; }
         public required List<RoleDto> Roles { get; set; }
         public InvitationDto? Invitation { get; set; }
