@@ -31,7 +31,7 @@ namespace FollwUp.API.Repositories
                 configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.Now.AddMonths(1),
+                expires: DateTime.Now.AddMonths(5), // TODO::: You may consider reducing the expiration time
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
