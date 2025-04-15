@@ -45,5 +45,20 @@ namespace FollwUp.API.Controllers
 
             return Ok(profileDto);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UpdateProfileRequestDto updateProfileRequestDto)
+        {
+            var profileDomainModel = mapper.Map<Model.Domain.Profile>(updateProfileRequestDto);
+
+            var updatedProfileDomainModel= await profileRepository.UpdateAsync(profileDomainModel);
+
+            if (updatedProfileDomainModel == null)
+                return NotFound("Profile not found");
+
+            var profileDto = mapper.Map<ProfileDto>(updatedProfileDomainModel);
+
+            return Ok(profileDto);
+        }
     }
 }

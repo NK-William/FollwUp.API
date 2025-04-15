@@ -30,6 +30,8 @@ namespace FollwUp.API.Mappings
             // Profile
             CreateMap<AddProfileRequestDto, Domain.Profile>().ReverseMap();
             CreateMap<Domain.Profile, ProfileDto>().ReverseMap();
+            CreateMap<UpdateProfileRequestDto, Domain.Profile>().ReverseMap();
+            CreateMap<UpdateProfileRequestDto, ProfileDto>().ReverseMap();
         }
     }
 }

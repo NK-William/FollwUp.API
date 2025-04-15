@@ -1,8 +1,11 @@
-﻿namespace FollwUp.API.Repositories.Interfaces
+﻿using FollwUp.API.Model.Domain;
+
+namespace FollwUp.API.Repositories.Interfaces
 {
     public interface IProfileRepository
     {
-        Task<Model.Domain.Profile> CreateAsync(Model.Domain.Profile profile);
-        Task<Model.Domain.Profile?> GetByEmailAsync(string email);
+        Task<Profile> CreateAsync(Profile profile);
+        Task<Profile?> GetByEmailAsync(string email);
+        Task<Profile?> UpdateAsync(Profile profile);
     }
 }

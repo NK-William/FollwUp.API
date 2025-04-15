@@ -31,5 +31,20 @@ namespace FollwUp.API.Repositories
         {
             return await dbContext.Profiles.FirstOrDefaultAsync(p => p.EmailAddress == email);
         }
+
+        public async Task<Profile?> UpdateAsync(Profile profile)
+        {
+            var existingProfile = await dbContext.Profiles.FirstOrDefaultAsync(p => p.Id == profile.Id);
+
+            if (existingProfile == null)
+                return null;
+
+            existingProfile.FirstName = profile.FirstName;
+            existingProfile.LastName = profile.LastName;
+            existingProfile.PhoneNumber = profile.PhoneNumber;
+
+            await dbContext.SaveChangesAsync();
+            return existingProfile;
+        }
     }
 }
