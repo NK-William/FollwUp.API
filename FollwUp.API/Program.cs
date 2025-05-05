@@ -14,6 +14,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// Add CORS policy (Note: only use this when backend and frontend are on different domains)
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowFrontend", policy => {
+        policy
+            .WithOrigins("http://localhost:3001") // React dev server
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 builder.Services.AddControllers();
 builder.Services.AddTransient<PhasesController>();
 builder.Services.AddTransient<RolesController>();
@@ -115,6 +124,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 var app = builder.Build();
+
+// Enable CORS (Note: only use this when backend and frontend are on different domains)
+app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
