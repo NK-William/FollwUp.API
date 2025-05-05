@@ -10,6 +10,6 @@ namespace FollwUp.API.Model.DTO
         public string? Description { get; set; }
         public string? Icon { get; set; }
         public TaskPhaseStatus Status { get; set; }
-        public Guid TaskId { get; set; }
+        // public Guid TaskId { get; set; }
     }
 }

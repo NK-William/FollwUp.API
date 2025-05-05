@@ -115,6 +115,31 @@ namespace FollwUp.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ForTracker/{id:Guid}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetForTrackerById([FromRoute] Guid id)
+        {
+            var taskDomainModel = await taskRepository.GetByIdAsync(id);
+
+            if (taskDomainModel != null)
+            {
+                // ToDo: Clean this code
+                var trackerTaskDto = mapper.Map<TrackerTaskDto>(taskDomainModel);
+
+                // Get Phases by task id
+                var phaseDto = await phasesController.GetAllByTaskId(id);
+                if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
+                    trackerTaskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value).OrderBy(p => p.Number).ToList();
+
+                return Ok(trackerTaskDto);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
 
         [HttpGet]
         [Route("ByProfileId/{id:Guid}")]
