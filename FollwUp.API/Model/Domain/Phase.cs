@@ -9,8 +9,8 @@ namespace FollwUp.API.Model.Domain
         public int Number { get; set; }
         public string? Description { get; set; }
         public string? Icon { get; set; }
+        public IconType IconType { get; set; }
         public TaskPhaseStatus Status { get; set; }
-
         public Guid TaskId { get; set; }
 
         // Navigation properties

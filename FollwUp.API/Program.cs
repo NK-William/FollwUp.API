@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowFrontend", policy => {
         policy
-            .WithOrigins("http://localhost:3001") // React dev server
+            .WithOrigins("http://localhost:3000") // React dev server
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

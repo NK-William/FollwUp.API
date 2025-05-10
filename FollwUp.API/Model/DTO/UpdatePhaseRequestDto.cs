@@ -1,4 +1,5 @@
 ﻿using FollwUp.API.Enums;
+using FollwUp.API.Model.Domain;
 using System.ComponentModel.DataAnnotations;
 
 namespace FollwUp.API.Model.DTO
@@ -15,7 +16,7 @@ namespace FollwUp.API.Model.DTO
         [MaxLength(1000, ErrorMessage = "Description text is too long")]
         public string? Description { get; set; }
 
-        public string? Icon { get; set; }
+        public Icon? Icon { get; set; }
 
         public TaskPhaseStatus Status { get; set; }
 
