@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using FollwUp.API.Enums;
+using FollwUp.API.Helpers;
+using FollwUp.API.Interfaces;
 using FollwUp.API.Model.DTO;
 using FollwUp.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -20,15 +22,17 @@ namespace FollwUp.API.Controllers
         private readonly PhasesController phasesController;
         private readonly RolesController rolesController;
         private readonly InvitationsController invitationsController;
+        private readonly IEmailService emailService;
 
         public TasksController(IMapper mapper, ITaskRepository taskRepository, PhasesController phasesController,
-            RolesController rolesController, InvitationsController invitationsController)
+            RolesController rolesController, InvitationsController invitationsController, IEmailService emailService)
         {
             this.mapper = mapper;
             this.taskRepository = taskRepository;
             this.phasesController = phasesController;
             this.rolesController = rolesController;
             this.invitationsController = invitationsController;
+            this.emailService = emailService;
         }
 
         [HttpPost]
@@ -77,6 +81,12 @@ namespace FollwUp.API.Controllers
             var invitationDto = await invitationsController.Create(addTaskRequestDto.Invitation);
             if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
+
+            var success = await emailService.SendEmailAsync("", "", addTaskRequestDto.ClientEmail, "", "");
+            if (!success)
+            {
+                // TODO::: should return OK but with a warning, advice a user consult to me
+            }
 
             return Ok(taskDto);
         }
@@ -130,7 +140,18 @@ namespace FollwUp.API.Controllers
                 // Get Phases by task id
                 var phaseDto = await phasesController.GetAllByTaskId(id);
                 if (phaseDto is OkObjectResult okPhaseResult && okPhaseResult.Value != null)
+                {
                     trackerTaskDto.Phases = new List<PhaseDto>((List<PhaseDto>)okPhaseResult.Value).OrderBy(p => p.Number).ToList();
+                    
+                    // foreach (var phase in trackerTaskDto.Phases)
+                    // {
+                    //     if(phase.Icon != null)
+                    //     {
+                    //         var iconNameMap = IconNameMapper.IconMap.GetValueOrDefault(phase.Icon.Type);
+                    //         phase.Icon.Name = iconNameMap?.GetValueOrDefault(phase.Icon.Name) ?? "";
+                    //     }
+                    // }
+                }
 
                 return Ok(trackerTaskDto);
             }

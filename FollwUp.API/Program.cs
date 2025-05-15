@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using FollwUp.API.Services;
+using FollwUp.API.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,7 @@ builder.Services.AddTransient<PhasesController>();
 builder.Services.AddTransient<RolesController>();
 builder.Services.AddTransient<InvitationsController>();
 builder.Services.AddTransient<ProfilesController>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
