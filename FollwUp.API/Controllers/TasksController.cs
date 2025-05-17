@@ -82,7 +82,11 @@ namespace FollwUp.API.Controllers
             if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
 
-            var success = await emailService.SendEmailAsync("", "", addTaskRequestDto.ClientEmail, "", "");
+            var frontendUrl = $"https://your-frontend-domain.com/details/{taskDto.Id}";
+            string message = $"<p>A task for {addTaskRequestDto.Name} has been created, please click a link below to track:</p><a href='{frontendUrl}'>Track task</a>";
+                
+            // TODO::: senderEmail@gmail.com should be replaced with a real sender email
+            var success = await emailService.SendEmailAsync(addTaskRequestDto.Organization, "NkunaTebogo09@gmail.com", addTaskRequestDto.ClientEmail, message, "Task creation");
             if (!success)
             {
                 // TODO::: should return OK but with a warning, advice a user consult to me

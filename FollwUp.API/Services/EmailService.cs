@@ -1,4 +1,7 @@
 using System;
+using brevo_csharp.Api;
+using brevo_csharp.Client;
+using FollwUp.API.Constants;
 using FollwUp.API.Interfaces;
 using RestSharp;
 
@@ -6,22 +9,22 @@ namespace FollwUp.API.Services;
 
 public class EmailService : IEmailService
 {
-    private readonly string _brevoApiKey = "your-brevo-api-key";
+    private readonly string _brevoApiKey = Sensitive.brevoApiKey;
 
     public async Task<bool> SendEmailAsync(string senderName, string senderEmail, string toEmail, string message, string? subject = null)
     {
         var client = new RestClient("https://api.brevo.com/v3/smtp/email");
-        var request = new RestRequest("POST");
+        var request = new RestRequest("", Method.Post);
+        request.AddHeader("accept", "application/json");
         request.AddHeader("api-key", _brevoApiKey);
         request.AddHeader("Content-Type", "application/json");
 
-        var frontendUrl = $"https://your-frontend-domain.com/details/{taskId}"; //TODO::: should not be in here, should be part of message
             var body = new
             {
-                sender = new { name = "YourApp", email = "your@sender.com" }, // senderName and senderEmail should be used here
-                to = new[] { new { email = toEmail } },
-                subject = "Your Unique Link", // subject should be used here
-                htmlContent = $"<p>Click the link below to view your data:</p><a href='{frontendUrl}'>Open Link</a>" // message here
+                sender = new { name = senderName, email = senderEmail},
+                to = new[] { new { email = toEmail} },
+                subject = subject, // TODO::: test with a null subject
+                htmlContent = message
             };
 
         request.AddJsonBody(body);
@@ -33,7 +36,35 @@ public class EmailService : IEmailService
             Console.WriteLine(response.Content); // TODO::: push this error to trace
             return false;
         }
-        
+
         return true;
     }
+
+    // public async Task<bool> SendEmailAsync(string senderName, string senderEmail, string toEmail, string message, string? subject = null)
+    // {
+    //     var client = new RestClient("https://api.brevo.com/v3/smtp/email");
+    //     var request = new RestRequest("POST");
+    //     request.AddHeader("api-key", _brevoApiKey);
+    //     request.AddHeader("Content-Type", "application/json");
+
+    //         var body = new
+    //         {
+    //             sender = new { name = senderName, email = senderEmail},
+    //             to = new[] { new { email = toEmail } },
+    //             subject = subject, // TODO::: test with a null subject
+    //             htmlContent = message
+    //         };
+
+    //     request.AddJsonBody(body);
+    //     var response = await client.ExecuteAsync(request);
+
+    //     if (!response.IsSuccessful)
+    //     {
+    //         // Handle error logging or retry
+    //         Console.WriteLine(response.Content); // TODO::: push this error to trace
+    //         return false;
+    //     }
+
+    //     return true;
+    // }
 }
