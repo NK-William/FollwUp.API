@@ -82,7 +82,7 @@ namespace FollwUp.API.Controllers
             if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
 
-            var frontendUrl = $"https://your-frontend-domain.com/details/{taskDto.Id}";
+            var frontendUrl = $"http://localhost:3000/track/{taskDto.Id}";
             string message = $"<p>A task for {addTaskRequestDto.Name} has been created, please click a link below to track:</p><a href='{frontendUrl}'>Track task</a>";
                 
             // TODO::: senderEmail@gmail.com should be replaced with a real sender email
@@ -93,6 +93,24 @@ namespace FollwUp.API.Controllers
             }
 
             return Ok(taskDto);
+        }
+
+        [HttpGet]
+        [Route("TestSendEmail")]
+        [AllowAnonymous]
+        public async Task<IActionResult> TestSendEmail(){
+            var frontendUrl = $"http://localhost:3000/track/6a987db0-5797-40f8-f995-08dd6ea858f3";
+            string message = $"<p>A task for engine rebuild has been created, please click a link below to track:</p><a href='{frontendUrl}'>Track task</a>";
+                
+            // TODO::: senderEmail@gmail.com should be replaced with a real sender email
+            var success = await emailService.SendEmailAsync("BMW Centurion", "NkunaTebogo09@gmail.com", "NkunaWilliam09@gmail.com", message, "Task creation");
+            if (!success)
+            {
+                // TODO::: should return OK but with a warning, advice a user consult to me
+                return BadRequest("Failed to send email");
+            }
+
+            return Ok("Email sent");
         }
 
         [HttpGet]
