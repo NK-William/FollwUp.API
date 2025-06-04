@@ -128,6 +128,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://*:{port}");
+
 // Enable CORS (Note: only use this when backend and frontend are on different domains)
 app.UseCors("AllowFrontend");
 
