@@ -9,14 +9,14 @@ namespace FollwUp.API.Services;
 
 public class EmailService : IEmailService
 {
-    private readonly string _brevoApiKey = Sensitive.brevoApiKey;
+    private readonly string _emailApiKey = Keys.EmailApiKey;
 
     public async Task<bool> SendEmailAsync(string senderName, string senderEmail, string toEmail, string message, string? subject = null)
     {
         var client = new RestClient("https://api.brevo.com/v3/smtp/email");
         var request = new RestRequest("", Method.Post);
         request.AddHeader("accept", "application/json");
-        request.AddHeader("api-key", _brevoApiKey);
+        request.AddHeader("api-key", _emailApiKey);
         request.AddHeader("Content-Type", "application/json");
 
             var body = new
