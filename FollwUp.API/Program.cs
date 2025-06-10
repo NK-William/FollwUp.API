@@ -3,6 +3,7 @@ using FollwUp.API.Mappings;
 using FollwUp.API.Repositories.Interfaces;
 using FollwUp.API.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.OpenApi.Models;
 using FollwUp.API.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -66,11 +67,11 @@ builder.Services.AddSwaggerGen(options =>
 
 // Injecting FollwupDbContext dependency
 builder.Services.AddDbContext<FollwupDbContext>(options =>
-     options.UseSqlServer(builder.Configuration.GetConnectionString("FollwupConnectionString")));
+     options.UseNpgsql(builder.Configuration.GetConnectionString("FollwupConnectionString")));
 
 // Injecting FollwUpAuthDbContext dependency
 builder.Services.AddDbContext<FollwupAuthDbContext>(options =>
-     options.UseSqlServer(builder.Configuration.GetConnectionString("FollwupAuthConnectionString")));
+     options.UseNpgsql(builder.Configuration.GetConnectionString("FollwupAuthConnectionString")));
 
 // Injecting ITaskRepository dependency with the implementation SqlTaskRepository
 builder.Services.AddScoped<ITaskRepository, SqlTaskRepository>();
@@ -148,5 +149,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<FollwupDbContext>();
+    db.Database.Migrate();
+
+    var authDb = scope.ServiceProvider.GetRequiredService<FollwupAuthDbContext>();
+    authDb.Database.Migrate();
+}
 
 app.Run();
