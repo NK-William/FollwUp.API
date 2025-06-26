@@ -82,7 +82,7 @@ namespace FollwUp.API.Controllers
             if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
 
-            var frontendUrl = $"http://localhost:3000/track/{taskDto.Id}";
+            var frontendUrl = $"https://follwup-tracker.onrender.com/track/{taskDto.Id}";
             string message = $"<p>A task for {addTaskRequestDto.Name} has been created, please click a link below to track:</p><a href='{frontendUrl}'>Track task</a>";
                 
             // TODO::: senderEmail@gmail.com should be replaced with a real sender email
@@ -96,10 +96,10 @@ namespace FollwUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("TestSendEmail")]
+        [Route("TestSendEmail/{id:Guid}")]
         [AllowAnonymous]
-        public async Task<IActionResult> TestSendEmail(){
-            var frontendUrl = $"http://localhost:3000/track/6a987db0-5797-40f8-f995-08dd6ea858f3";
+        public async Task<IActionResult> TestSendEmail([FromRoute] Guid id){
+            var frontendUrl = $"https://follwup-tracker.onrender.com/track/{id}";
             string message = $"<p>A task for engine rebuild has been created, please click a link below to track:</p><a href='{frontendUrl}'>Track task</a>";
                 
             // TODO::: senderEmail@gmail.com should be replaced with a real sender email
