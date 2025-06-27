@@ -82,7 +82,7 @@ namespace FollwUp.API.Controllers
             if (invitationDto is OkObjectResult okInvitationResult && okInvitationResult.Value != null)
                 taskDto.Invitation = (InvitationDto)okInvitationResult.Value;
 
-            var frontendUrl = $"follwup-tracker-87pe.vercel.app/track/{taskDto.Id}";
+            var frontendUrl = $"https://follwup-tracker-87pe.vercel.app/track/{taskDto.Id}";
             string message = $"<p>A task for {addTaskRequestDto.Name} has been created, please click a link below to track:</p><a href='{frontendUrl}'>Track task</a>";
                 
             // TODO::: senderEmail@gmail.com should be replaced with a real sender email
@@ -99,7 +99,7 @@ namespace FollwUp.API.Controllers
         [Route("TestSendEmail/{id:Guid}")]
         [AllowAnonymous]
         public async Task<IActionResult> TestSendEmail([FromRoute] Guid id){
-            var frontendUrl = $"follwup-tracker-87pe.vercel.app/track/{id}";
+            var frontendUrl = $"https://follwup-tracker-87pe.vercel.app/track/{id}";
             string message = $"<p>A task for engine rebuild has been created, please click a link below to track:</p><a href='{frontendUrl}'>Track task</a>";
                 
             // TODO::: senderEmail@gmail.com should be replaced with a real sender email
