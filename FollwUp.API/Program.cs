@@ -21,7 +21,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowFrontend", policy => {
         policy
-            .WithOrigins("http://localhost:3000") // React dev server
+            .WithOrigins(
+                "http://localhost:3000",
+                "https://follwup-tracker-87pe.vercel.app") // React dev server
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
